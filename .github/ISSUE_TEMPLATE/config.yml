@@ -1,8 +1,9 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 💬 Discord / Support
-    url: [INSERT_YOUR_DISCORD_OR_EMAIL_LINK]
+  - name: 💬 Support
+    url: andras@gregorigin.com
+    url: https://forums.unrealengine.com/t/gregorigin-sonant-native-contextual-audio-middleware/2684588
     about: Please ask general questions or feature requests here.
   - name: 📚 Documentation
-    url: [INSERT_YOUR_DOCS_LINK]
+    url: https://gregorigin.gitbook.io/sonant-docs
     about: Read the manual before reporting a bug.
