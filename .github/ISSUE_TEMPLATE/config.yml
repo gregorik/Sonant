@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discord / Support
+    url: [INSERT_YOUR_DISCORD_OR_EMAIL_LINK]
+    about: Please ask general questions or feature requests here.
+  - name: 📚 Documentation
+    url: [INSERT_YOUR_DOCS_LINK]
+    about: Read the manual before reporting a bug.
