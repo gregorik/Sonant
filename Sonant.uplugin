@@ -1,0 +1,38 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Sonant",
+	"Description": "Native Contextual Audio Middleware",
+	"Category": "Audio",
+	"CreatedBy": "GregOrigin",
+	"CreatedByURL": "",
+	"DocsURL": "https://gregorigin.gitbook.io/sonant-docs/",
+	"MarketplaceURL": "com.epicgames.launcher://ue/Fab/product/0d59694e-e827-48d0-b0fc-d9a25b3d6968",
+	"SupportURL": "",
+	"EngineVersion": "5.7",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "Sonant",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64",
+				"Mac",
+				"Linux",
+				"IOS",
+				"Android"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "AudioModulation",
+			"Enabled": true
+		}
+	]
+}
