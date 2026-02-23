@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonant 1.0 - Native Contextual Audio Middleware</title>
+    <style>
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-sidebar: #111827;
+            --bg-card: #1f2937;
+            --accent: #00ffff;
+            --text-main: #e0e0e0;
+            --text-dim: #9ca3af;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --code-bg: #1e293b;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        aside {
+            background-color: var(--bg-sidebar);
+            padding: 1.5rem 2rem 2rem 2rem;
+            border-right: 1px solid #333;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* GregOrigin Logo */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .logo-link {
+            display: inline-block;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .logo-link:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.4));
+        }
+
+        .logo-svg {
+            width: 180px;
+            height: 60px;
+        }
+
+        aside h2 {
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+            margin-top: 0;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        aside ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        aside li {
+            margin-bottom: 0.5rem;
+        }
+
+        aside a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s, background-color 0.2s;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border-left: 3px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        aside a:hover, aside a.active {
+            color: var(--accent);
+            background-color: rgba(0, 255, 255, 0.05);
+            border-left-color: var(--accent);
+        }
+
+        /* Main Content */
+        main {
+            padding: 3rem 4rem;
+            max-width: 1200px;
+            position: relative;
+        }
+
+        /* Fab Link */
+        .fab-link {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid #333;
+            border-radius: 20px;
+            transition: all 0.2s;
+            background: var(--bg-card);
+        }
+
+        .fab-link:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .fab-icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: 4rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.5rem;
+            scroll-margin-top: 2rem;
+        }
+
+        section {
+            scroll-margin-top: 4rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: #fff;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            color: var(--accent);
+        }
+
+        p {
+            line-height: 1.6;
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+
+        .card.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .card.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .card.success {
+            border-left: 4px solid var(--success);
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            border-left: 3px solid var(--accent);
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #a5b4fc;
+        }
+
+        .inline-code {
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #a5b4fc;
+            font-size: 0.9em;
+        }
+
+        /* Diagrams/Illustrations (CSS Art) */
+        .diagram {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        
+        .diagram-tag {
+            display: inline-block;
+            background: rgba(0, 255, 255, 0.1);
+            color: var(--accent);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--accent);
+            margin: 0.5rem;
+        }
+
+        .diagram-arrow {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            margin: 0 1rem;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* Utilities */
+        .highlight {
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        .note {
+            background-color: rgba(255, 255, 0, 0.1);
+            border-left: 4px solid #ffd700;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            color: #e0e0e0;
+        }
+
+        .tip {
+            background-color: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            color: #e0e0e0;
+        }
+
+        .warning-box {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            color: #e0e0e0;
+        }
+
+        ol, ul {
+            color: var(--text-dim);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: rgba(0, 255, 255, 0.1);
+            color: var(--accent);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #333;
+            color: var(--text-dim);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .step {
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background-color: var(--accent);
+            color: var(--bg-dark);
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .api-method {
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #333;
+        }
+
+        .api-method h4 {
+            margin-top: 0;
+            color: var(--accent);
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .api-params {
+            margin-top: 1rem;
+            padding-left: 1rem;
+        }
+
+        .api-param {
+            margin-bottom: 0.5rem;
+        }
+
+        .param-name {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .param-type {
+            color: #a5b4fc;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                grid-template-columns: 1fr;
+            }
+            aside {
+                height: auto;
+                position: relative;
+                border-bottom: 1px solid #333;
+                padding: 1rem;
+            }
+            main {
+                padding: 2rem;
+            }
+            .fab-link {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 2rem;
+                display: inline-flex;
+            }
+            .logo-svg {
+                width: 140px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="logo-container">
+            <a href="https://www.gregorigin.com" target="_blank" class="logo-link" title="Visit GregOrigin.com">
+                <svg class="logo-svg" viewBox="0 0 180 60" xmlns="http://www.w3.org/2000/svg">
+                    <!-- GregOrigin Logo -->
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#00ffff"/>
+                            <stop offset="100%" style="stop-color:#0080ff"/>
+                        </linearGradient>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <!-- Abstract G Icon -->
+                    <circle cx="25" cy="30" r="18" fill="none" stroke="url(#logoGradient)" stroke-width="3"/>
+                    <path d="M25 18 L25 30 L35 30" fill="none" stroke="url(#logoGradient)" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="25" cy="30" r="5" fill="#00ffff"/>
+                    
+                    <!-- GregOrigin Text -->
+                    <text x="50" y="26" font-family="Segoe UI, sans-serif" font-size="16" font-weight="bold" fill="#e0e0e0">GREG</text>
+                    <text x="50" y="44" font-family="Segoe UI, sans-serif" font-size="14" fill="#00ffff">ORIGIN</text>
+                </svg>
+            </a>
+        </div>
+        <h2>SONANT 1.0</h2>
+        <nav>
+            <ul>
+                <li><a href="#intro" class="nav-link">Introduction</a></li>
+                <li><a href="#features" class="nav-link">Key Features</a></li>
+                <li><a href="#setup" class="nav-link">Installation & Setup</a></li>
+                <li><a href="#quickstart" class="nav-link">Quick Start Guide</a></li>
+                <li><a href="#surfaces" class="nav-link">Surface System</a></li>
+                <li><a href="#physics" class="nav-link">Physics Impact</a></li>
+                <li><a href="#atmosphere" class="nav-link">Atmosphere System</a></li>
+                <li><a href="#reverb" class="nav-link">Auto Reverb</a></li>
+                <li><a href="#performance" class="nav-link">Performance</a></li>
+                <li><a href="#api" class="nav-link">C++ API Reference</a></li>
+                <li><a href="#blueprint" class="nav-link">Blueprint Guide</a></li>
+                <li><a href="#best-practices" class="nav-link">Best Practices</a></li>
+                <li><a href="#troubleshooting" class="nav-link">Troubleshooting</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+                <li><a href="#demo" class="nav-link">Demo & Quick Start</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <a href="https://www.fab.com/sellers/GregOrigin" target="_blank" class="fab-link">
+            <svg class="fab-icon" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/>
+            </svg>
+            <span>Get it on Fab</span>
+        </a>
+
+        <section id="intro">
+            <h1>Sonant 1.0</h1>
+            <p>Native Contextual Audio Middleware for Unreal Engine 5.7</p>
+            <p>Sonant replaces scattered audio logic with a unified, data-driven pipeline. From physically accurate footsteps to dynamic room estimation, Sonant handles the complexity so you can focus on the soundscape. Designed for performance and ease of use, Sonant integrates seamlessly with UE5's AudioModulation system.</p>
+            
+            <div id="features" class="features">
+                <div class="card">
+                    <h3>🎯 Contextual Surfaces</h3>
+                    <p>Map GameplayTags (Walk, Run, Land) to specific materials. Supports Physical Materials, Material Instances, and Sub-Mesh detection with intelligent caching.</p>
+                </div>
+                <div class="card">
+                    <h3>💥 Physics Audio</h3>
+                    <p>Automatically triggers impact sounds based on Mass and Velocity. Falls, collisions, and debris sound right instantly with automatic intensity detection.</p>
+                </div>
+                <div class="card">
+                    <h3>🌊 Auto Reverb</h3>
+                    <p>Raycasts the environment in real-time (2Hz) to determine room size and apply the perfect Reverb Bus Mix dynamically without manual volume triggers.</p>
+                </div>
+                <div class="card">
+                    <h3>🏔️ Atmosphere Zones</h3>
+                    <p>Push and pop atmospheric zones with priority-based mixing. Perfect for underwater sections, caves, forests, or any environmental audio transition.</p>
+                </div>
+                <div class="card">
+                    <h3>⚡ High Performance</h3>
+                    <p>O(1) material lookup caching, optimized raycasting, and minimal overhead. Built for AAA production environments with profiling in mind.</p>
+                </div>
+                <div class="card">
+                    <h3>🔧 Data-Driven</h3>
+                    <p>Configure everything through Data Assets. No code changes needed for new surface types, allowing sound designers to work independently.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="setup">
+            <h2>Installation & Setup</h2>
+            
+            <div class="note">
+                <strong>Prerequisites:</strong> Unreal Engine 5.7+ and the <span class="inline-code">AudioModulation</span> plugin enabled in your project.
+            </div>
+
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Install the Plugin</strong>
+                <p>Copy the <span class="inline-code">Sonant</span> folder into your project's <span class="inline-code">Plugins/</span> directory. Restart the editor if it was open.</p>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Enable the Plugin</strong>
+                <p>Navigate to <strong>Edit &gt; Plugins &gt; Audio &gt; Sonant</strong> and check the enabled box. Restart the editor when prompted.</p>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Create Configuration Asset</strong>
+                <p>In the Content Browser, Right Click &gt; <strong>Miscellaneous &gt; Data Asset</strong> &gt; Select <span class="inline-code">SonantConfig</span>. Name it something like <span class="inline-code">DA_Sonant_Global</span>.</p>
+            </div>
+
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Register Configuration</strong>
+                <p>Open <strong>Project Settings &gt; Plugins &gt; Sonant Audio</strong> and assign your created config to the <strong>Main Config</strong> property.</p>
+            </div>
+
+            <div class="step">
+                <span class="step-number">5</span>
+                <strong>Setup GameplayTags (Optional)</strong>
+                <p>In <strong>Project Settings &gt; GameplayTags</strong>, add default tags like <span class="inline-code">Sonant.Event.Footstep</span>, <span class="inline-code">Sonant.Event.Impact.Light</span>, and <span class="inline-code">Sonant.Event.Impact.Heavy</span>.</p>
+            </div>
+        </section>
+
+        <section id="quickstart">
+            <h2>Quick Start Guide</h2>
+            <p>Get your first contextual footstep working in under 5 minutes:</p>
+
+            <h3>1. Prepare Your Audio</h3>
+            <p>Import your footstep sounds and create Sound Cues or MetaSounds for different surface types (Grass, Metal, Stone, etc.).</p>
+
+            <h3>2. Configure Surfaces</h3>
+            <p>Open your <span class="inline-code">SonantConfig</span> asset and add entries to the <strong>Keyword Map</strong>:</p>
+            <ul>
+                <li>Key: <span class="inline-code">Grass</span> (matches materials with "Grass" in the name)</li>
+                <li>Sounds Map: Add entry with Key <span class="inline-code">Sonant.Event.Footstep</span></li>
+                <li>Assign your grass footstep Sound Cue</li>
+            </ul>
+
+            <h3>3. Trigger from Blueprint</h3>
+            <p>In your Character Blueprint, during the footstep animation notify:</p>
+            <pre>
+Get Game Instance -> Get Subsystem (Sonant Subsystem)
+    -> Play Footstep
+        Location: Get Actor Location
+        Surface Hit: Line Trace result from foot socket
+            </pre>
+
+            <h3>4. Test</h3>
+            <p>Place meshes with materials containing "Grass" in your level and walk on them. You should hear your configured sounds!</p>
+
+            <div class="tip">
+                <strong>Pro Tip:</strong> Use the included <span class="inline-code">ASonantDemoGenerator</span> actor to quickly visualize and test your surface configurations in a generated test environment.
+            </div>
+        </section>
+
+        <section id="surfaces">
+            <h2>Generalized Surface System</h2>
+            <p>Sonant 1.0 introduces a powerful <strong>GameplayTag-driven</strong> event system. Instead of just "Footsteps", you can now define any audio event for a surface type—landing, jumping, scuffing, rolling, or custom gameplay actions.</p>
+            
+            <div class="diagram">
+                <span class="diagram-tag">Surface Hit (Grass)</span>
+                <span class="diagram-arrow">→</span>
+                <span class="diagram-tag">Event Tag (Run)</span>
+                <span class="diagram-arrow">→</span>
+                <span class="diagram-tag" style="background: rgba(0, 255, 0, 0.1); border-color: #0f0;">Play: SFC_Grass_Run.wav</span>
+            </div>
+
+            <h3>Resolution Priority</h3>
+            <p>Sonant resolves surface types in this order (first match wins):</p>
+            <ol>
+                <li><strong>Physical Material Map</strong> - Exact asset match (most precise)</li>
+                <li><strong>Material Cache</strong> - Previously resolved material lookup</li>
+                <li><strong>Keyword Map</strong> - Substring search in material name</li>
+                <li><strong>Default Surface</strong> - Fallback configuration</li>
+            </ol>
+
+            <h3>How to Add a New Footstep Type</h3>
+            <ol>
+                <li>Open your <span class="inline-code">SonantConfig</span> asset.</li>
+                <li>Find or Add an entry in <strong>Keyword Map</strong> (e.g., Key: "Grass" matches any material with "Grass" in the name).</li>
+                <li>Expand the <strong>Sounds</strong> map.</li>
+                <li>Add a Key: <span class="inline-code">Sonant.Event.Footstep</span> (or your custom tag).</li>
+                <li>Assign your Sound Cue or MetaSound to the <strong>Sound</strong> property.</li>
+                <li>Adjust <strong>Volume</strong> and <strong>Pitch Randomization</strong> to add variety.</li>
+            </ol>
+            
+            <div class="note">
+                <strong>Tip:</strong> Use Physical Materials for precise control. Add an entry to <strong>Physics Map</strong> and assign your Physical Material asset (e.g. <span class="inline-code">PM_Metal</span>). This overrides name-based detection.
+            </div>
+
+            <h3>Supported Material Types</h3>
+            <table>
+                <tr>
+                    <th>Material Type</th>
+                    <th>Detection Method</th>
+                    <th>Use Case</th>
+                </tr>
+                <tr>
+                    <td>Base Materials</td>
+                    <td>Name substring matching</td>
+                    <td>Prototyping, simple projects</td>
+                </tr>
+                <tr>
+                    <td>Material Instances</td>
+                    <td>Parent material name</td>
+                    <td>Production environments</td>
+                </tr>
+                <tr>
+                    <td>Physical Materials</td>
+                    <td>Direct asset reference</td>
+                    <td>Precise control, final shipping</td>
+                </tr>
+                <tr>
+                    <td>Per-Face Materials</td>
+                    <td>Collision face index lookup</td>
+                    <td>Complex meshes with multiple surfaces</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="physics">
+            <h2>Physics Impact System</h2>
+            <p>The <span class="inline-code">PlayImpact</span> API handles collision audio automatically. It calculates intensity based on impact force and selects the appropriate tag, pitch, and volume scaling.</p>
+
+            <h3>Blueprint Usage</h3>
+            <p>Call <span class="inline-code">PlayImpact</span> in your actor's <strong>OnComponentHit</strong> event:</p>
+            <pre>
+Event Hit (MyActor)
+    -> Sonant Subsystem: Play Impact
+        Location: Hit.Location
+        Impact Force: NormalImpulse.Size()
+        Surface Hit: Hit Result
+            </pre>
+
+            <h3>Thresholds & Logic</h3>
+            <p>The system automatically categorizes impacts into tiers:</p>
+            <ul>
+                <li><strong>Force &lt; 50.0:</strong> Ignored (Silence) - prevents micro-jitter noise.</li>
+                <li><strong>Force 50 - 2000:</strong> Triggers <span class="inline-code">Sonant.Event.Impact.Light</span>. Pitch is slightly increased (1.2x) for a lighter sound.</li>
+                <li><strong>Force &gt; 2000:</strong> Triggers <span class="inline-code">Sonant.Event.Impact.Heavy</span>. Pitch is lowered (0.8x) for a heavier thud. Volume scales with force up to 2.0x.</li>
+            </ul>
+
+            <div class="tip">
+                <strong>Optimization:</strong> The physics system respects collision response settings. Ensure your meshes have appropriate collision profiles to avoid unnecessary audio calculations.
+            </div>
+        </section>
+
+        <section id="atmosphere">
+            <h2>Atmosphere System</h2>
+            <p>The Atmosphere System manages environmental audio transitions through priority-based Control Bus Mix activation. Perfect for areas with distinct acoustic properties.</p>
+
+            <h3>Common Use Cases</h3>
+            <ul>
+                <li><strong>Underwater:</strong> Muffle high frequencies, apply underwater reverb</li>
+                <li><strong>Caves:</strong> Heavy reverb, echo effects</li>
+                <li><strong>Forests:</strong> Open ambience, distant wildlife</li>
+                <li><strong>Indoors:</strong> Room tone, muffled exterior sounds</li>
+                <li><strong>Radio Zones:</strong> Music mixing areas</li>
+            </ul>
+
+            <h3>Setting Up Atmosphere Zones</h3>
+            <ol>
+                <li>Create Sound Control Bus Mixes for each atmosphere type in your project</li>
+                <li>In <span class="inline-code">SonantConfig</span>, expand the <strong>Atmospheres</strong> map</li>
+                <li>Add entries with GameplayTag keys (e.g., <span class="inline-code">Sonant.Atmosphere.Underwater</span>)</li>
+                <li>Set <strong>Priority</strong> (higher wins): Underwater=100, Cave=50, Forest=10</li>
+                <li>Assign the <strong>Mix Asset</strong> (your Sound Control Bus Mix)</li>
+            </ol>
+
+            <h3>Using SonantVolume Components</h3>
+            <p>Add a <span class="inline-code">USonantVolume</span> component to any actor to create atmosphere zones:</p>
+            <ol>
+                <li>Add the component to your trigger volume or blocking volume</li>
+                <li>Set the <strong>Atmosphere Tag</strong> property</li>
+                <li>The atmosphere pushes on overlap and pops on end overlap automatically</li>
+            </ol>
+
+            <h3>Nested Atmospheres</h3>
+            <p>Sonant supports nested zones through reference counting. If the player enters a Cave (priority 50) inside a Forest (priority 10), the Cave mix wins. When they exit the cave, it automatically falls back to Forest.</p>
+        </section>
+
+        <section id="reverb">
+            <h2>Auto Reverb Estimation</h2>
+            <p>Sonant passively scans the environment around the player to determine room size using a 6-axis raycast system. This eliminates the need for manual reverb volume placement in most scenarios.</p>
+            
+            <div class="diagram">
+                <span class="diagram-tag">Raycast Up</span>
+                <span class="diagram-tag">Raycast Down</span>
+                <span class="diagram-tag">Raycast Left/Right</span>
+                <span class="diagram-tag">Raycast Forward/Back</span>
+                <br><br>
+                <span class="diagram-arrow">↓</span>
+                <br><br>
+                <span class="diagram-tag">Average Distance = 450cm</span>
+                <span class="diagram-arrow">→</span>
+                <span class="diagram-tag" style="background: rgba(255, 165, 0, 0.1); border-color: orange;">Apply: SmallRoom_Reverb</span>
+            </div>
+
+            <h3>How it Works</h3>
+            <p>Every 0.5 seconds, the subsystem fires rays in 6 directions (Up, Down, Left, Right, Forward, Back) up to 50 meters. It calculates the <strong>Average Open Distance</strong> and compares against your <strong>Reverb Settings</strong> in <span class="inline-code">SonantConfig</span>.</p>
+
+            <h3>Configuration</h3>
+            <p>In <span class="inline-code">SonantConfig</span>, fill the <strong>Reverb Settings</strong> array:</p>
+            <ul>
+                <li><strong>Max Room Radius:</strong> The upper limit for this preset (e.g., 500 for Small Room, 2000 for Hall).</li>
+                <li><strong>Reverb Mix:</strong> The Sound Control Bus Mix to activate. This mix should apply a Reverb Submix Effect.</li>
+            </ul>
+            <p>The system automatically selects the smallest Radius that fits the current average distance (Best Fit algorithm).</p>
+
+            <h3>Example Presets</h3>
+            <table>
+                <tr>
+                    <th>Environment</th>
+                    <th>Max Room Radius</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Outdoors/Open</td>
+                    <td>5000</td>
+                    <td>No reverb or minimal room tone</td>
+                </tr>
+                <tr>
+                    <td>Large Hall</td>
+                    <td>2000</td>
+                    <td>Cathedrals, stadiums, large caves</td>
+                </tr>
+                <tr>
+                    <td>Medium Room</td>
+                    <td>800</td>
+                    <td>Offices, apartments, corridors</td>
+                </tr>
+                <tr>
+                    <td>Small Room</td>
+                    <td>400</td>
+                    <td>Bathrooms, closets, tight spaces</td>
+                </tr>
+            </table>
+
+            <div class="tip">
+                <strong>Performance:</strong> Reverb updates run at 2Hz on the game thread. The system caches results and only activates/deactivates mixes when necessary, minimizing AudioModulation overhead.
+            </div>
+        </section>
+
+        <section id="performance">
+            <h2>Performance Optimization</h2>
+            
+            <h3>Material Cache</h3>
+            <p>Sonant maintains an O(1) lookup cache for material resolutions. The cache auto-initializes with 128 entries and grows as needed. First contact with a new material performs a substring search; subsequent contacts are instant.</p>
+
+            <h3>Raycast Budget</h3>
+            <p>The auto-reverb system uses a fixed budget:</p>
+            <ul>
+                <li><strong>Frequency:</strong> 2Hz (every 0.5 seconds)</li>
+                <li><strong>Ray Count:</strong> 6 traces per update</li>
+                <li><strong>Max Distance:</strong> 5000 units (configurable in code)</li>
+                <li><strong>Collision:</strong> Visibility channel only</li>
+            </ul>
+
+            <h3>Profiling</h3>
+            <p>Use these console commands to monitor Sonant:</p>
+            <pre>
+stat sonant        // Display Sonant performance stats (if implemented)
+stat game          // General game thread performance
+show collision     // Visualize trace queries
+            </pre>
+
+            <h3>Optimization Tips</h3>
+            <div class="card warning">
+                <h4>Large Open Worlds</h4>
+                <p>For very large open worlds, consider disabling auto-reverb outdoors and using manual atmosphere zones for specific landmarks. Use the <span class="inline-code">UpdateReverb()</span> function's source code as a reference for custom implementations.</p>
+            </div>
+            <div class="card warning">
+                <h4>High-Frequency Events</h4>
+                <p>For rapid-fire events (machine gun impacts, fast footsteps), consider implementing cooldown timers in your Blueprints to avoid flooding the audio thread. Sonant handles the surface detection efficiently, but audio instantiation has inherent costs.</p>
+            </div>
+        </section>
+
+        <section id="api">
+            <h2>C++ API Reference</h2>
+            <p>Access via <span class="inline-code">USonantSubsystem</span> (GameInstance Subsystem).</p>
+
+            <div class="api-method">
+                <h4>PlaySoundAtLocation(EventTag, Location, SurfaceHit, VolumeMultiplier, PitchMultiplier)</h4>
+                <p>Generic audio event system. Use this for any custom event (Land, Jump, Scuff).</p>
+                <div class="api-params">
+                    <div class="api-param"><span class="param-name">EventTag</span> <span class="param-type">FGameplayTag</span> - The event type (e.g., Sonant.Event.Footstep)</div>
+                    <div class="api-param"><span class="param-name">Location</span> <span class="param-type">FVector</span> - World position for 3D audio</div>
+                    <div class="api-param"><span class="param-name">SurfaceHit</span> <span class="param-type">FHitResult</span> - Trace result containing material info</div>
+                    <div class="api-param"><span class="param-name">VolumeMultiplier</span> <span class="param-type">float</span> - Additional volume scaling (default: 1.0)</div>
+                    <div class="api-param"><span class="param-name">PitchMultiplier</span> <span class="param-type">float</span> - Additional pitch scaling (default: 1.0)</div>
+                </div>
+            </div>
+
+            <div class="api-method">
+                <h4>PlayImpact(Location, ImpactForce, SurfaceHit)</h4>
+                <p>Helper for collision events. Automatically selects Light/Heavy impact tags based on force.</p>
+                <div class="api-params">
+                    <div class="api-param"><span class="param-name">Location</span> <span class="param-type">FVector</span> - Impact world position</div>
+                    <div class="api-param"><span class="param-name">ImpactForce</span> <span class="param-type">float</span> - Magnitude of impact (NormalImpulse.Size())</div>
+                    <div class="api-param"><span class="param-name">SurfaceHit</span> <span class="param-type">FHitResult</span> - Collision result</div>
+                </div>
+            </div>
+
+            <div class="api-method">
+                <h4>PlayFootstep(Location, SurfaceHit)</h4>
+                <p>Convenience wrapper that calls PlaySoundAtLocation with <span class="inline-code">Sonant.Event.Footstep</span> tag.</p>
+            </div>
+
+            <div class="api-method">
+                <h4>PushAtmosphere(Tag)</h4>
+                <p>Activates an atmosphere by tag. Increments reference count if already active.</p>
+            </div>
+
+            <div class="api-method">
+                <h4>PopAtmosphere(Tag)</h4>
+                <p>Deactivates an atmosphere by tag. Decrements reference count; mix persists if count > 0.</p>
+            </div>
+
+            <h3>Internal Methods</h3>
+            <div class="api-method">
+                <h4>ResolveMaterial(Hit) → const FSonantSurfaceDef*</h4>
+                <p>Core material resolution logic. Returns surface definition based on priority order (Physics → Cache → Keyword → Default).</p>
+            </div>
+        </section>
+
+        <section id="blueprint">
+            <h2>Blueprint Guide</h2>
+
+            <h3>Accessing the Subsystem</h3>
+            <p>All Sonant functions are available through the Game Instance Subsystem:</p>
+            <pre>
+Get Game Instance
+    -> Get Subsystem (Class: Sonant Subsystem)
+        -> [Any Sonant function]
+            </pre>
+
+            <h3>Character Footstep Setup</h3>
+            <ol>
+                <li>Open your Character Blueprint</li>
+                <li>Add a Line Trace by Channel before the footstep should play</li>
+                <li>Set Start to Foot Socket location, End to Start + (0,0,-50)</li>
+                <li>On Hit: Get Game Instance → Get Subsystem (Sonant)</li>
+                <li>Call Play Footstep with Hit Location and Hit Result</li>
+            </ol>
+
+            <h3>Physics Impact Setup</h3>
+            <ol>
+                <li>Select your physics-enabled mesh</li>
+                <li>Add Event On Component Hit</li>
+                <li>Get Sonant Subsystem</li>
+                <li>Call Play Impact with:
+                    <ul>
+                        <li>Location: Hit.Location</li>
+                        <li>Impact Force: Normal Impulse → Vector Length</li>
+                        <li>Surface Hit: Hit Result pin</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Atmosphere Volume Setup</h3>
+            <ol>
+                <li>Create a Blueprint extending Actor</li>
+                <li>Add a Box Collision component</li>
+                <li>Add Sonant Volume component</li>
+                <li>Set Atmosphere Tag property (e.g., Sonant.Atmosphere.Underwater)</li>
+                <li>Set collision to Overlap All or specific channels</li>
+            </ol>
+        </section>
+
+        <section id="best-practices">
+            <h2>Best Practices</h2>
+
+            <div class="card">
+                <h3>🎯 Naming Conventions</h3>
+                <p>Establish consistent material naming early. Use <span class="inline-code">M_SurfaceType_Variant</span> format (e.g., <span class="inline-code">M_Grass_Dry</span>, <span class="inline-code">M_Metal_Rusted</span>). This makes keyword matching reliable.</p>
+            </div>
+
+            <div class="card">
+                <h3>🔊 Audio Asset Organization</h3>
+                <p>Organize sounds by surface type, not by character. Use folders like <span class="inline-code">/Audio/Sonant/Surfaces/Grass/</span> containing Walk, Run, Land, Impact subfolders.</p>
+            </div>
+
+            <div class="card">
+                <h3>🧪 Testing Workflow</h3>
+                <p>Use the included demo generators (<span class="inline-code">ASonantDemoGenerator</span>, <span class="inline-code">ASonantAutoShowcase</span>) to test surface configurations before implementing in your main level.</p>
+            </div>
+
+            <div class="card">
+                <h3>⚖️ Physics Material Strategy</h3>
+                <p>Use Physical Materials for final polish on critical surfaces. Start with keyword matching for rapid prototyping, then refine with Physical Material overrides.</p>
+            </div>
+
+            <div class="card">
+                <h3>🔇 The Silence Threshold</h3>
+                <p>The 50.0 force threshold for impacts exists for good reason—micro-collisions from physics jitter create noise. Don't lower this without careful testing.</p>
+            </div>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>Troubleshooting</h2>
+            
+            <div class="card error">
+                <h3>🔇 No Sound Playing At All</h3>
+                <p><strong>Symptoms:</strong> Complete silence from Sonant functions.</p>
+                <ul>
+                    <li>Verify <span class="inline-code">AudioModulation</span> plugin is enabled in Project Settings</li>
+                    <li>Check that a <span class="inline-code">SonantConfig</span> Data Asset exists and is assigned in Project Settings &gt; Sonant Audio</li>
+                    <li>Ensure the Subsystem is being accessed correctly: <span class="inline-code">Get Game Instance -&gt; Get Subsystem (Sonant Subsystem)</span></li>
+                    <li>Check the Output Log for yellow warnings about missing config</li>
+                    <li>Verify your Sound Cues are valid and not reporting errors</li>
+                </ul>
+            </div>
+
+            <div class="card warning">
+                <h3>🎵 Wrong Sound Playing</h3>
+                <p><strong>Symptoms:</strong> Footsteps sound like a different material.</p>
+                <ul>
+                    <li>Check if a <strong>Physical Material</strong> is assigned to the mesh—Physics Map overrides Keyword Map</li>
+                    <li>Verify your material name contains the keyword (case-sensitive in some engine versions)</li>
+                    <li>Check if the mesh has proper collision data for sub-material detection</li>
+                    <li>Clear the material cache (restart PIE) if you've changed material names</li>
+                    <li>Verify the default surface isn't being used (add logging or check in debugger)</li>
+                </ul>
+            </div>
+
+            <div class="card warning">
+                <h3>🌊 Reverb Not Changing</h3>
+                <p><strong>Symptoms:</strong> Reverb stays the same regardless of room size.</p>
+                <ul>
+                    <li>Ensure your <strong>Sound Control Bus Mix</strong> is correctly configured with a Reverb Submix Effect</li>
+                    <li>Verify the <span class="inline-code">AudioModulation</span> plugin is enabled</li>
+                    <li>Check that Reverb Settings array in SonantConfig has entries</li>
+                    <li>Ensure collision exists on Visibility channel for raycasts to hit</li>
+                    <li>Check the Max Room Radius values—larger rooms must have larger values</li>
+                    <li>Verify the player pawn is valid and has a controller</li>
+                </ul>
+            </div>
+
+            <div class="card warning">
+                <h3>💥 No Audio on Impact</h3>
+                <p><strong>Symptoms:</strong> Physics collisions make no sound.</p>
+                <ul>
+                    <li>Enable <strong>Simulation Generates Hit Events</strong> on the mesh component</li>
+                    <li>Verify the impact force exceeds 50.0 (add Print String to check Normal Impulse size)</li>
+                    <li>Check that collision is properly set up (not just overlap)</li>
+                    <li>Ensure the hit surface has a valid material assigned</li>
+                    <li>For destructible meshes, check that impact data is being passed correctly</li>
+                </ul>
+            </div>
+
+            <div class="card warning">
+                <h3>🏔️ Atmosphere Not Applying</h3>
+                <p><strong>Symptoms:</strong> Entering zones doesn't change the audio mix.</p>
+                <ul>
+                    <li>Verify the Atmosphere Tag matches an entry in SonantConfig's Atmospheres map</li>
+                    <li>Check that the SonantVolume component is actually overlapping the player</li>
+                    <li>Ensure the priority is set correctly (higher number = higher priority)</li>
+                    <li>Verify the Sound Control Bus Mix asset is valid and activatable</li>
+                    <li>Check if multiple overlapping zones are conflicting (check ActiveAtmosphereCounts in debugger)</li>
+                </ul>
+            </div>
+
+            <div class="card warning">
+                <h3>🐌 Performance Issues</h3>
+                <p><strong>Symptoms:</strong> Frame drops when using Sonant.</p>
+                <ul>
+                    <li>Check for excessive raycasts—disable auto-reverb if using many manual zones</li>
+                    <li>Profile with <span class="inline-code">stat game</span> to see if UpdateReverb is expensive</li>
+                    <li>Reduce the frequency of footstep events (don't call every frame)</li>
+                    <li>Ensure material cache isn't growing unbounded (should stabilize after initial area exploration)</li>
+                    <li>Check for redundant subsystem calls in Blueprints</li>
+                </ul>
+            </div>
+
+            <div class="card warning">
+                <h3>🎨 Material Not Detected</h3>
+                <p><strong>Symptoms:</strong> Default sound plays for custom materials.</p>
+                <ul>
+                    <li>Verify the material instance's PARENT name contains the keyword (not just the instance name)</li>
+                    <li>For complex meshes, ensure collision face index is being read (requires detailed collision)</li>
+                    <li>Check that the material is actually applied to the rendered mesh, not just a duplicate</li>
+                    <li>Verify the Static Mesh has "Use Complex Collision As Simple" disabled for face-index detection</li>
+                    <li>Use <span class="inline-code">show collision</span> console command to visualize traces</li>
+                </ul>
+            </div>
+
+            <div class="card success">
+                <h3>✅ Debug Checklist</h3>
+                <p>If you're still stuck, verify these in order:</p>
+                <ol>
+                    <li>Plugin enabled and editor restarted</li>
+                    <li>SonantConfig asset created and assigned</li>
+                    <li>GameplayTags registered (if using custom tags)</li>
+                    <li>Sound Cues valid and audible</li>
+                    <li>Trace channels hitting correct collision</li>
+                    <li>Subsystem accessible from your Blueprint</li>
+                    <li>No errors in Output Log related to Sonant</li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="faq">
+            <h2>Frequently Asked Questions</h2>
+
+            <h3>Does Sonant work with MetaSounds?</h3>
+            <p>Yes! Sonant works with any <span class="inline-code">USoundBase</span> asset, which includes Sound Cues, MetaSounds, and Wave files.</p>
+
+            <h3>Can I use Sonant with multiplayer?</h3>
+            <p>Yes. Sonant runs locally on each client. For replicated physics events, trigger the audio on each client when the replicated event occurs. The demo generators include network-safe checks.</p>
+
+            <h3>Does it support Niagara particle audio?</h3>
+            <p>Sonant handles surface-based audio events. For particle audio, use Niagara's built-in audio or trigger Sonant functions from Blueprints based on particle collision events.</p>
+
+            <h3>Can I disable auto-reverb and use manual zones?</h3>
+            <p>Absolutely. Auto-reverb is optional. You can leave the Reverb Settings array empty and use atmosphere zones exclusively.</p>
+
+            <h3>Is there a performance cost for having many surface types?</h3>
+            <p>No. Once cached, surface resolution is O(1) regardless of how many types you have. The only cost is initial memory for the cache entries.</p>
+
+            <h3>Does Sonant work with World Partition?</h3>
+            <p>Yes. Sonant operates independently of level streaming. Atmosphere zones should be placed in persistent levels or appropriate sub-levels.</p>
+
+            <h3>Can I extend Sonant with custom C++?</h3>
+            <p>Yes. Sonant is designed as a foundation. Inherit from <span class="inline-code">USonantSubsystem</span> or modify the plugin source directly for project-specific needs.</p>
+        </section>
+
+        <section id="demo">
+            <h2>Demo & Quick Start</h2>
+            <p>Sonant includes a comprehensive demo system that showcases all features without requiring custom audio assets.</p>
+
+            <div class="tip">
+                <strong>No .Wav Files Needed!</strong> The demo uses Unreal Engine's built-in sounds as placeholders. You can add your own audio later.
+            </div>
+
+            <h3>Demo Components</h3>
+            <div class="features">
+                <div class="card">
+                    <h3>Surface Showcase</h3>
+                    <p>5 platform types (Grass, Metal, Stone, Wood, Glass) with color-coded materials and automatic surface detection.</p>
+                </div>
+                <div class="card">
+                    <h3>Impact Range</h3>
+                    <p>Physics projectiles demonstrating light, medium, and heavy impact detection with force-based scaling.</p>
+                </div>
+                <div class="card">
+                    <h3>Atmosphere Zones</h3>
+                    <p>3 interactive zones (Outdoor, Cave, Underwater) showcasing priority-based atmosphere mixing.</p>
+                </div>
+                <div class="card">
+                    <h3>Reverb Rooms</h3>
+                    <p>4 rooms of increasing size (Closet, Room, Hall, Cavern) demonstrating auto-reverb detection.</p>
+                </div>
+            </div>
+
+            <h3>Quick Setup (5 Minutes)</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Enable Plugin</strong>
+                <p>Copy Sonant folder to Plugins/, enable in Edit > Plugins, restart.</p>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Create Config</strong>
+                <p>Right-click > Miscellaneous > Data Asset > SonantConfig. Name it DA_Sonant_Demo.</p>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Configure Surfaces</strong>
+                <p>Add 5 Keyword Map entries: Grass, Metal, Stone, Wood, Glass. Point each to engine notification sounds.</p>
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Register Config</strong>
+                <p>Project Settings > Sonant Audio > Main Config = DA_Sonant_Demo.</p>
+            </div>
+            <div class="step">
+                <span class="step-number">5</span>
+                <strong>Run Demo</strong>
+                <p>Drag ASonantFeatureDemo into level, assign basic shapes, press Play!</p>
+            </div>
+
+            <h3>Demo Controls</h3>
+            <table>
+                <tr>
+                    <th>Key</th>
+                    <th>Action</th>
+                    <th>Result</th>
+                </tr>
+                <tr>
+                    <td>1-5</td>
+                    <td>Test Surface</td>
+                    <td>Play footstep sound for specific surface</td>
+                </tr>
+                <tr>
+                    <td>Q</td>
+                    <td>Light Impact</td>
+                    <td>Spawn low-force projectile</td>
+                </tr>
+                <tr>
+                    <td>E</td>
+                    <td>Heavy Impact</td>
+                    <td>Spawn high-force projectile</td>
+                </tr>
+                <tr>
+                    <td>R</td>
+                    <td>Cycle Surface</td>
+                    <td>Test next surface type</td>
+                </tr>
+                <tr>
+                    <td>T</td>
+                    <td>Print Info</td>
+                    <td>Debug current surface detection</td>
+                </tr>
+            </table>
+
+            <h3>Adding Your Own Audio</h3>
+            <p>Once the demo works with placeholder sounds:</p>
+            <ol>
+                <li>Import your .wav files to <span class="inline-code">/Game/Audio/Sonant/</span></li>
+                <li>Create Sound Cues with Random nodes for variation</li>
+                <li>Update DA_Sonant_Demo to reference your Sound Cues</li>
+                <li>Fine-tune Volume and Pitch Randomization per surface</li>
+            </ol>
+
+            <h3>Free Audio Resources</h3>
+            <ul>
+                <li><strong>Freesound.org</strong> - Creative Commons sound library</li>
+                <li><strong>Sonnis GDC Bundles</strong> - Free annual game audio giveaway</li>
+                <li><strong>Epic Games Marketplace</strong> - Free monthly audio packs</li>
+                <li><strong>Adobe Audition</strong> - Procedural sound generation</li>
+            </ul>
+
+            <p>See <span class="inline-code">QuickStart_Demo.md</span> and <span class="inline-code">DemoSetupGuide.md</span> in the Resources/Docs folder for complete setup instructions.</p>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 GregOrigin. Built for Unreal Engine 5.7.</p>
+            <p>Documentation Version 1.0 | For support, visit <a href="https://www.gregorigin.com" target="_blank">gregorigin.com</a></p>
+        </footer>
+    </main>
+
+    <script>
+        // Scroll Spy Logic
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -50% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
