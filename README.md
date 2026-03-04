@@ -45,6 +45,10 @@ Sonant replaces scattered audio logic with a unified, data-driven pipeline. From
 
 ---
 
+<p align="center">
+<img src="Resources/Docs/sonantdev1.png" alt="Sonant Workflow" width="400"/>
+</p>
+
 ## 🚀 Quick Start
 
 ### Prerequisites
