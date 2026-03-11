@@ -13,6 +13,7 @@
 
 Sonant replaces scattered audio logic with a unified, data-driven pipeline. From physically accurate footsteps to dynamic room estimation, Sonant handles the complexity so you can focus on the soundscape.<br>
 
+[Full version on Fab](https://www.fab.com/listings/0d59694e-e827-48d0-b0fc-d9a25b3d6968) <br>
 [Watch an old teaser vid](https://youtu.be/7MlXRAEAtKc) <br>
 [Update video](https://youtu.be/Uz2dEmECxE4) <br>
 
