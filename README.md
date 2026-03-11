@@ -11,7 +11,10 @@
 <img src="Resources/Docs/Sonant_Logo.png" alt="Sonant Logo" width="400"/>
 </p>
 
-Sonant replaces scattered audio logic with a unified, data-driven pipeline. From physically accurate footsteps to dynamic room estimation, Sonant handles the complexity so you can focus on the soundscape.
+Sonant replaces scattered audio logic with a unified, data-driven pipeline. From physically accurate footsteps to dynamic room estimation, Sonant handles the complexity so you can focus on the soundscape.<br>
+
+[Watch an old teaser vid](https://youtu.be/7MlXRAEAtKc) <br>
+[Update video](https://youtu.be/Uz2dEmECxE4) <br>
 
 [📚 Documentation](Resources/Docs/Sonant_1.0_Manual.html) • [🎮 Demo Guide](Resources/Docs/QuickStart_Demo.md) • [🌐 Website](https://www.gregorigin.com)
 
