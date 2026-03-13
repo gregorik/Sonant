@@ -19,6 +19,9 @@ Sonant replaces scattered audio logic with a unified, data-driven pipeline. From
 
 [📚 Documentation](Resources/Docs/Sonant_1.0_Manual.html) • [🎮 Demo Guide](Resources/Docs/QuickStart_Demo.md) • [🌐 Website](https://www.gregorigin.com)
 
+Also, in case you need this adapted or integrated into a production UE5 project: I offer paid Unreal Engine [consulting and implementation](https://gregorigin.com/contact.html).
+
+
 ---
 
 ## ✨ Features
