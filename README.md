@@ -1,355 +1,70 @@
-# 🔊 Sonant
+<div align=""center"">
 
-> **Native Contextual Audio Middleware for Unreal Engine 5.7**
+# 🔊 Sonant Core
 
-[![Version](https://img.shields.io/badge/Version-1.0-cyan.svg)](https://gregorigin.com)
-[![Engine](https://img.shields.io/badge/UE-5.7-blue.svg)](https://www.unrealengine.com)
-[![License](https://img.shields.io/badge/License-Proprietary-gray.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Win64%20%7C%20Mac%20%7C%20Linux%20%7C%20iOS%20%7C%20Android-green.svg)]()
+**Zero-Setup Native Contextual Audio Manager for Unreal Engine 5**
 
-<p align="center">
-<img src="Resources/Docs/Sonant_Logo.png" alt="Sonant Logo" width="400"/>
-</p>
+[![Unreal Engine](https://img.shields.io/badge/Unreal_Engine-5.7+-blue.svg?logo=unrealengine&logoColor=white)](https://www.unrealengine.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-Sonant replaces scattered audio logic with a unified, data-driven pipeline. From physically accurate footsteps to dynamic room estimation, Sonant handles the complexity so you can focus on the soundscape.<br>
-
-[Full version on Fab](https://www.fab.com/listings/0d59694e-e827-48d0-b0fc-d9a25b3d6968) <br>
-[Watch an old teaser vid](https://youtu.be/7MlXRAEAtKc) <br>
-[Update video](https://youtu.be/Uz2dEmECxE4) <br>
-
-[📚 Documentation](Resources/Docs/Sonant_1.0_Manual.html) • [🎮 Demo Guide](Resources/Docs/QuickStart_Demo.md) • [🌐 Website](https://www.gregorigin.com)
-
-Also, in case you need this adapted or integrated into a production UE5 project: I offer paid Unreal Engine [consulting and implementation](https://gregorigin.com/contact.html).
-
+</div>
 
 ---
 
-## ✨ Features
+## 🚀 No more Physical Material Grind
 
-### 🎯 Contextual Surfaces
-- **Automatic surface detection** via material names, physical materials, or per-face collision
-- **GameplayTag-driven events** - Define any audio event (Walk, Run, Land, Impact)
-- **Smart caching** - O(1) material lookup after first hit
-- **Sub-mesh support** - Different sounds for different parts of complex meshes
+Tired of manually creating and assigning UPhysicalMaterial assets to every single mesh, landscape layer, and prop in your game just to get the right footstep sound?
 
-### 💥 Physics Impact System
-- **Automatic intensity detection** based on impact force
-- **Light/Medium/Heavy** categorization with configurable thresholds
-- **Pitch and volume scaling** based on physics properties
-- **Micro-collision filtering** - Eliminates jitter noise
+**Sonant Core** reinvents audio workflow by introducing **Keyword-Based Surface Detection**. Instead of relying on brittle physics materials, Sonant intelligently scans the names of the visual materials your game is *already using* to instantly deduce the correct surface type. 
 
-### 🌊 Auto Reverb Estimation
-- **6-direction raycasting** (Up/Down/Left/Right/Forward/Back)
-- **Room size calculation** with configurable presets
-- **Dynamic Control Bus Mix** activation
-- **2Hz update rate** for optimal performance
-
-### 🏔️ Atmosphere Zones
-- **Priority-based mixing** - Higher priority zones override lower ones
-- **Reference counting** - Proper handling of nested zones
-- **Smooth transitions** via AudioModulation
-- **Volume component** for easy zone setup
+If your character steps on a mesh with a material named M_WetGrass_01, Sonant knows to play grass footsteps. It's that simple.
 
 ---
 
-<p align="center">
-<img src="Resources/Docs/sonantdev1.png" alt="Sonant Workflow" width="400"/>
-</p>
+## ✨ Core Features
 
-## 🚀 Quick Start
+### 🔍 Keyword Surface Detection
+Define simple string keywords like "Grass", "Metal", or "Wood" in a central Data Asset. Sonant will automatically match any material hit by a raycast to your defined surface profiles. No more physics material setup required.
 
-### Prerequisites
-- Unreal Engine 5.7+
-- AudioModulation plugin enabled
+### ⚡ Smart Caching Engine
+Material lookups happen once. Sonant caches the resolved surface type for every material it encounters, ensuring that subsequent impacts on the same material cost **0.0ms**.
 
-### Installation
-
-```bash
-# Clone or download into your project's Plugins folder
-cd YourProject/Plugins
-git clone https://github.com/gregorigin/sonant.git Sonant
-```
-
-Or manually:
-1. Download the latest release
-2. Copy `Sonant` folder to `YourProject/Plugins/`
-3. Restart Unreal Editor
-
-### Basic Setup
-
-**1. Create Configuration Asset**
-```
-Content Browser → Right Click → Miscellaneous → Data Asset → SonantConfig
-Name: DA_Sonant_Config
-```
-
-**2. Configure Surfaces**
-
-| Surface | Keyword | Sound Event |
-|---------|---------|-------------|
-| 🌱 Grass | `Grass` | `Sonant.Event.Footstep` |
-| 🔩 Metal | `Metal` | `Sonant.Event.Footstep` |
-| 🪨 Stone | `Stone` | `Sonant.Event.Footstep` |
-| 🪵 Wood | `Wood` | `Sonant.Event.Footstep` |
-| 🪟 Glass | `Glass` | `Sonant.Event.Footstep` |
-
-**3. Register in Project Settings**
-```
-Edit → Project Settings → Plugins → Sonant Audio
-Main Config: DA_Sonant_Config
-```
-
-**4. Add Required GameplayTags**
-```
-Project Settings → GameplayTags:
-- Sonant.Event.Footstep
-- Sonant.Event.Impact.Light
-- Sonant.Event.Impact.Heavy
-- Sonant.Atmosphere.Outdoor
-- Sonant.Atmosphere.Cave
-- Sonant.Atmosphere.Underwater
-```
-
-That's it! You're ready to use Sonant.
+### 🧩 Blueprint Native & Data-Driven
+Everything is driven by standard UDataAsset configurations and FGameplayTag events. Easily call PlayFootstep or PlayImpact from your animation notifies or physics events.
 
 ---
 
-## 💻 Usage
+## 🛠️ Quick Setup
 
-### Blueprint Example: Footsteps
-
-```
-[Animation Notify: Footstep]
-    │
-    ├── Line Trace by Channel
-    │   Start: Foot Socket Location
-    │   End: Start + (0, 0, -50)
-    │
-    └── If Hit
-        └── Get Game Instance
-            └── Get Subsystem (Sonant Subsystem)
-                └── Play Footstep
-                    Location: Hit.Location
-                    Surface Hit: Hit Result
-```
-
-### Blueprint Example: Physics Impact
-
-```
-[On Component Hit]
-    │
-    └── Get Game Instance
-        └── Get Subsystem (Sonant Subsystem)
-            └── Play Impact
-                Location: Hit.Location
-                Impact Force: Normal Impulse → Vector Length
-                Surface Hit: Hit Result
-```
-
-### C++ Example
-
-```cpp
-#include "SonantSubsystem.h"
-
-// Get the subsystem
-USonantSubsystem* Sonant = GetGameInstance()->GetSubsystem<USonantSubsystem>();
-
-// Play a footstep
-FHitResult Hit = /* your line trace result */;
-Sonant->PlayFootstep(Hit.ImpactPoint, Hit);
-
-// Play a custom event
-Sonant->PlaySoundAtLocation(
-    FGameplayTag::RequestGameplayTag("Sonant.Event.Land"),
-    Hit.ImpactPoint,
-    Hit,
-    1.0f, // Volume
-    1.0f  // Pitch
-);
-
-// Activate an atmosphere zone
-Sonant->PushAtmosphere(
-    FGameplayTag::RequestGameplayTag("Sonant.Atmosphere.Underwater")
-);
-
-// Leave atmosphere zone
-Sonant->PopAtmosphere(
-    FGameplayTag::RequestGameplayTag("Sonant.Atmosphere.Underwater")
-);
-```
+1. **Create a Configuration:** Right-click in your Content Browser -> Miscellaneous -> Data Asset -> SonantCoreConfig.
+2. **Define Surfaces:** Add a new Surface Definition. Set the tag (e.g., Sonant.Surface.Wood), add a keyword ("Wood"), and assign your Sound Cue or MetaSound.
+3. **Assign to Settings:** Open **Project Settings -> Sonant Core** and assign your new Data Asset.
+4. **Trigger Audio:** In your character's blueprint, use the **Sonant Core Subsystem** node to call PlayFootstep and pass in the Hit Result from a line trace.
 
 ---
 
-## 🎮 Included Demo
+<br>
 
-Sonant comes with a comprehensive demo system that showcases all features **without requiring custom audio assets**.
+<div align="center">
+<p><i>Sonant Core is useful, but it's just the doorstep. If interested, Sonant Pro can transform your game into a living, breathing acoustic experience.</i></p>
+</div>
 
-### Demo Features
+| Feature | Sonant Core (Free) | Sonant Pro |
+| :--- | :---: | :---: |
+| **Keyword Surface Detection** | ✅ | ✅ |
+| **Smart Caching** | ✅ | ✅ |
+| **Dynamic Raycast Reverb** | ❌ | ✅ *(Real-time room size calculation)* |
+| **Atmosphere Stacking** | ❌ | ✅ *(Priority-based overlapping audio zones)* |
+| **Multiplayer Ready** | ❌ | ✅ *(Dedicated Network Component & RPCs)* |
+| **Velocity-Driven Foley** | ❌ | ✅ *(Auto clothing rustle based on speed)* |
+| **Spline & Volumetric Audio** | ❌ | ✅ *(Recommended for rivers and roads)* |
+| **Surface-Synced VFX & Decals** | ❌ | ✅ *(Spawn bullet holes/dust with audio)* |
 
-| Component | Description |
-|-----------|-------------|
-| **Surface Showcase** | 5 platform types with automatic detection |
-| **Impact Range** | Light/Medium/Heavy physics demonstrations |
-| **Atmosphere Zones** | Outdoor, Cave, Underwater transitions |
-| **Reverb Rooms** | 4 rooms demonstrating auto-reverb (Closet to Cavern) |
-
-### Running the Demo
-
-```cpp
-1. Drag ASonantFeatureDemo into your level
-2. Set PlatformMesh = /Engine/BasicShapes/Cube
-3. Set BaseMaterial = /Engine/BasicShapes/BasicShapeMaterial
-4. Press Play!
-```
-
-**Controls:**
-- `1-5` - Test specific surface types
-- `Q` - Light impact test
-- `E` - Heavy impact test
-- `R` - Cycle through surfaces
-- `T` - Debug info
-
-See [Demo Setup Guide](Resources/Docs/QuickStart_Demo.md) for complete instructions.
+### 🚀 **[Get Sonant Pro on Fab.com](https://www.fab.com/listings/0d59694e-e827-48d0-b0fc-d9a25b3d6968)**
+*Stop fighting the engine and start designing your soundscape.*
 
 ---
 
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      Sonant Subsystem                        │
-│                   (GameInstanceSubsystem)                    │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-         ┌──────────┼──────────┐
-         ▼          ▼          ▼
-┌─────────────┐ ┌────────┐ ┌──────────┐
-│Surface System│ │Physics │ │Atmosphere│
-│             │ │Impact  │ │  Zones   │
-├─────────────┤ ├────────┤ ├──────────┤
-│• Keyword Map│ │• Force │ │• Priority│
-│• Physics Map│ │• Scale │ │• Stack   │
-│• Smart Cache│ │• Tags  │ │• Mix     │
-└─────────────┘ └────────┘ └──────────┘
-         │          │          │
-         └──────────┼──────────┘
-                    ▼
-┌─────────────────────────────────┐
-│      AudioModulation System     │
-│   (Sound Control Bus Mixes)     │
-└─────────────────────────────────┘
-```
-
----
-
-## 📊 Performance
-
-| Feature | Cost | Optimization |
-|---------|------|--------------|
-| Material Resolution | O(1) after cache | Smart caching with 128-entry reserve |
-| Auto Reverb | 6 traces @ 2Hz | Only on Visibility channel |
-| Atmosphere Updates | Event-driven | Reference counting |
-| Memory | ~50KB base | Scales with surface types |
-
-**Recommended Settings:**
-- Reverb Update Rate: 0.5s (2Hz)
-- Max Trace Distance: 5000 units
-- Cache Pre-allocation: 128 entries
-
----
-
-## 🛠️ System Requirements
-
-| Requirement | Minimum | Recommended |
-|-------------|---------|-------------|
-| **Engine** | UE 5.7 | UE 5.7+ |
-| **Platform** | Win64, Mac, Linux | Win64 |
-| **Dependencies** | AudioModulation, GameplayTags | AudioModulation, GameplayTags |
-| **Compiler** | C++20 Support | MSVC 2022 / Clang 14+ |
-
----
-
-## 📁 Project Structure
-
-```
-Sonant/
-├── Source/Sonant/
-│   ├── Public/
-│   │   ├── SonantConfig.h          # Data Asset configuration
-│   │   ├── SonantSettings.h        # Project settings
-│   │   ├── SonantSubsystem.h       # Main API
-│   │   ├── SonantVolume.h          # Atmosphere volume component
-│   │   ├── SonantFeatureDemo.h     # Demo environment
-│   │   └── SonantDemoCharacter.h   # Demo player character
-│   └── Private/
-│       ├── Sonant.cpp              # Module implementation
-│       ├── SonantSubsystem.cpp     # Core logic
-│       ├── SonantFeatureDemo.cpp   # Demo implementation
-│       └── ...
-├── Resources/
-│   ├── Docs/
-│   │   ├── Sonant_1.0_Manual.html  # Full documentation
-│   │   ├── QuickStart_Demo.md      # Demo quick start
-│   │   ├── DemoSetupGuide.md       # Complete setup
-│   │   └── DemoREADME.md           # Demo reference
-│   └── DemoInput.ini               # Demo input bindings
-└── Sonant.uplugin
-```
-
----
-
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [Full Manual](Resources/Docs/Sonant_1.0_Manual.html) | Complete feature documentation |
-| [Quick Start](Resources/Docs/QuickStart_Demo.md) | 5-minute setup guide |
-| [Demo Guide](Resources/Docs/DemoSetupGuide.md) | Comprehensive demo setup |
-| [API Reference](Resources/Docs/Sonant_1.0_Manual.html#api) | C++ API documentation |
-
----
-
-## 🎯 Use Cases
-
-- **First-Person Shooters** - Realistic footstep audio on varied terrain
-- **Platformers** - Impact sounds for landing and collisions
-- **Open World Games** - Dynamic reverb in caves, buildings, and forests
-- **Survival Games** - Material-based crafting and building audio
-- **VR Experiences** - Spatial audio with environmental effects
-
----
-
-## 🤝 Support
-
-- **Documentation**: [gregorigin.com/docs](https://gregorigin.com)
-- **Email**: support@gregorigin.com
-- **Issues**: Create a GitHub issue (if public repo)
-- **Fab**: [Get it on Fab](https://www.fab.com/sellers/GregOrigin)
-
----
-
-## 📝 License
-
-This plugin is proprietary software. See [LICENSE](LICENSE) file for details.
-
-Copyright (c) 2025-2026 GregOrigin. All Rights Reserved.
-
----
-
-## 🙏 Credits
-
-**Created by**: GregOrigin  
-**Documentation**: [GregOrigin Docs](https://gregorigin.gitbook.io/sonant-docs/)  
-**Marketplace**: [Fab](https://www.fab.com/sellers/GregOrigin)
-
----
-
-<p align="center">
-  <a href="https://www.gregorigin.com">
-    <img src="https://img.shields.io/badge/Visit-gregorigin.com-00ffff?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Website"/>
-  </a>
-</p>
-
-<p align="center">
-  <sub>Built with ❤️ for the Unreal Engine community</sub>
-</p>
+## 📄 License
+Sonant Core is released under the MIT License. See \LICENSE\ for details. 
+*Copyright (c) 2026 GregOrigin. All Rights Reserved.*
