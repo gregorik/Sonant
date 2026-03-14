@@ -1,0 +1,38 @@
+{
+	"FileVersion": 3,
+	"Version": 2,
+	"VersionName": "0.1",
+	"FriendlyName": "Sonant Core",
+	"Description": "Native Contextual Audio Middleware - Core Edition",
+	"Category": "Audio",
+	"CreatedBy": "GregOrigin",
+	"CreatedByURL": "https://www.gregorigin.com",
+	"DocsURL": "https://gregorigin.com/Sonant/",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "5.7.0",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "SonantCore",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64",
+				"Mac",
+				"Linux",
+				"IOS",
+				"Android"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "AudioModulation",
+			"Enabled": true
+		}
+	]
+}
