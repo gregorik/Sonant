@@ -22,6 +22,8 @@ Tired of manually creating and assigning UPhysicalMaterial assets to every singl
 
 If your character steps on a mesh with a material named M_WetGrass_01, Sonant knows to play grass footsteps. It's that simple.
 
+If you have consulting and/or custom pipeline integration in mind: I offer dedicated architecture consulting. 📬 Please [contact me](https://gregorigin.com/contact.html) or see my [extended portfolio](https://www.gregorigin.com/Portfolio/). 👨‍💻 
+
 [Discord support](https://discord.gg/nqYQ5mtmHb)
 
 ---
