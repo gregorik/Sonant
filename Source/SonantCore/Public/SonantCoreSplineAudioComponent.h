@@ -11,7 +11,7 @@ class USoundBase;
 class USplineComponent;
 
 /** Positions one persistent source at the point nearest any local audio listener. */
-UCLASS(ClassGroup = (Sonant), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (SonantCore), meta = (BlueprintSpawnableComponent))
 class SONANTCORE_API USonantCoreSplineAudioComponent : public UActorComponent
 {
     GENERATED_BODY()
