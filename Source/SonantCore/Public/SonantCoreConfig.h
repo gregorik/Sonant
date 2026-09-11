@@ -19,6 +19,18 @@ struct FSonantCoreSound {
     
     UPROPERTY(EditAnywhere, Category = "SonantCore|Audio")
     float PitchRandomization = 0.05f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SonantCore|Visuals")
+    TSoftObjectPtr<class UNiagaraSystem> VFX;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SonantCore|Visuals")
+    TSoftObjectPtr<class UMaterialInterface> Decal;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SonantCore|Visuals", meta = (ClampMin = "0.0"))
+    FVector DecalSize = FVector(10.0f);
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SonantCore|Visuals", meta = (ClampMin = "0.0"))
+    float DecalLifeSpan = 10.0f;
 };
 
 USTRUCT(BlueprintType)

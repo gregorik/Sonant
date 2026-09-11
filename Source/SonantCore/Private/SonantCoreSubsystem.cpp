@@ -8,9 +8,9 @@
 #include "Engine/World.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/Pawn.h"
-// If we dropped Niagara from deps, we should comment out or handle conditionally. But for now we might leave basic generic spawned VFX if the user keeps the module. 
-// User said: "no longer require Niagara if it's only for Pro VFX, etc. Keep basic FSonantSound data simple". I will comment out Niagara spawn.
+#include "NiagaraFunctionLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetDecalLibrary.h"
 
 void USonantCoreSubsystem::Initialize(FSubsystemCollectionBase& Collection) {
     Super::Initialize(Collection);
@@ -35,7 +35,20 @@ void USonantCoreSubsystem::PlaySoundAtLocation(FGameplayTag EventTag, const FVec
                 UGameplayStatics::PlaySoundAtLocation(this, SoundDef->Sound, Location, V, P);
             }
 
-            // VFX and Decals kept basic
+            // Spawn VFX
+            if (SoundDef->VFX.LoadSynchronous()) {
+                FRotator SurfaceRotation = UKismetMathLibrary::MakeRotFromZ(SurfaceHit.ImpactNormal);
+                UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+                    this, SoundDef->VFX.Get(), Location, SurfaceRotation);
+            }
+
+            // Spawn Decals
+            if (SoundDef->Decal.LoadSynchronous()) {
+                FRotator SurfaceRotation = UKismetMathLibrary::MakeRotFromX(SurfaceHit.ImpactNormal);
+                UGameplayStatics::SpawnDecalAtLocation(
+                    this, SoundDef->Decal.Get(), SoundDef->DecalSize, 
+                    Location, SurfaceRotation, SoundDef->DecalLifeSpan);
+            }
         }
     }
 }

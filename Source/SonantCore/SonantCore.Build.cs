@@ -20,7 +20,8 @@ public class SonantCore : ModuleRules
                 "GameplayTags",
                 "AudioModulation",
                 "DeveloperSettings",
-                "PhysicsCore"
+                "PhysicsCore",
+                "Niagara"
             }
         );
     }

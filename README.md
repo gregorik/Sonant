@@ -63,9 +63,9 @@ Everything is driven by standard UDataAsset configurations and FGameplayTag even
 | **Dynamic Raycast Reverb** | ❌ | ✅ *(Real-time room size calculation)* |
 | **Atmosphere Stacking** | ❌ | ✅ *(Priority-based overlapping audio zones)* |
 | **Multiplayer Ready** | ❌ | ✅ *(Dedicated Network Component & RPCs)* |
-| **Velocity-Driven Foley** | ❌ | ✅ *(Auto clothing rustle based on speed)* |
-| **Spline & Volumetric Audio** | ❌ | ✅ *(Recommended for rivers and roads)* |
-| **Surface-Synced VFX & Decals** | ❌ | ✅ *(Spawn bullet holes/dust with audio)* |
+| **Velocity-Driven Foley** | ✅ | ✅ *(Auto clothing rustle based on speed)* |
+| **Spline & Volumetric Audio** | ✅ | ✅ *(Recommended for rivers and roads)* |
+| **Surface-Synced VFX & Decals** | ✅ | ✅ *(Spawn bullet holes/dust with audio)* |
 
 ### 🚀 **[Get Sonant Pro on Fab.com](https://www.fab.com/listings/0d59694e-e827-48d0-b0fc-d9a25b3d6968)**
 *Stop fighting the engine and start designing your soundscape.*
