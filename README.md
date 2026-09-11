@@ -39,6 +39,15 @@ Material lookups happen once. Sonant caches the resolved surface type for every 
 ### 🧩 Blueprint Native & Data-Driven
 Everything is driven by standard UDataAsset configurations and FGameplayTag events. Easily call PlayFootstep or PlayImpact from your animation notifies or physics events.
 
+### 🏃 Velocity-Driven Foley
+Automatically crossfade and pitch-shift character movement sounds (like clothing rustles or armor clanks) based on the actor's velocity. No complex animation curves required.
+
+### 〰️ Spline Audio
+Perfect for rivers, roads, and power lines. A single spline audio component tracks the listener's closest point along a spline, panning and attenuating perfectly without duplicating audio sources.
+
+### 💥 Surface-Synced VFX & Decals
+Tie Niagara particle systems and visual decals directly to the same keyword-based surface definitions as your audio. A single line trace handles sound, visual effects, and footprint decals simultaneously.
+
 ---
 
 ## 🛠️ Quick Setup
